@@ -16,15 +16,25 @@ char* read_file(char* file_name) {
     rewind(file);
 
     // check file is not too large
-    if (file_size > MAX_FILE_SIZE) error("File too large.");
+    if (file_size > MAX_FILE_SIZE) {
+        fclose(file);
+        error("File too large.");
+    };
 
     // allocate memory for the file array
     char *file_buffer = (char *)malloc(file_size + 1);
-    if (!file_buffer) error("File buffer memory allocation failed.");
+    if (!file_buffer) {
+        fclose(file);
+        error("File buffer memory allocation failed.");
+    };
 
     // read file contents
     size_t bytes_read = fread(file_buffer, 1, file_size, file);
-    if (bytes_read != file_size) error("Partial file read occurred.");
+    if (bytes_read != file_size) {
+        free(file_buffer);
+        fclose(file);
+        error("Partial file read occurred.");
+    };
 
     // close file
     fclose(file);
