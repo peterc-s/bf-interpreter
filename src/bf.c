@@ -143,8 +143,7 @@ void inst_open_j(BrainFuck* bf, char** instruction_ptr) {
     // printf("Adding to stack!\n");
 
     // create new item on stack
-    bf->stack_ptr += 1;
-    bf->open_stack[bf->stack_ptr] = *instruction_ptr;
+    bf->open_stack[++bf->stack_ptr] = *instruction_ptr;
 }
 
 // corresponds to ]
