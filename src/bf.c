@@ -36,9 +36,16 @@ void bf_realloc_plus(BrainFuck* bf) {
     bf->memory_size *= 2;
 }
 
+// prints out the memory
+void bf_dump_memory(BrainFuck* bf) {
+    for (size_t i = 0; i < bf->memory_size; ++i) {
+        printf("%08lu: %d\n", i, bf->memory[i]);
+    }
+}
+
 void inst_ptr_inc(BrainFuck* bf) {
     //DEBUG
-    printf("PTR_INC\n");
+    // printf("PTR_INC\n");
 
     if (bf->data_ptr_pos + 1 == 0) {
         fprintf(stderr, "Error: Data pointer overflow at character %lu\n", bf->data_ptr_pos);
@@ -55,7 +62,7 @@ void inst_ptr_inc(BrainFuck* bf) {
 
 void inst_ptr_dec(BrainFuck* bf) {
     //DEBUG
-    printf("PTR_DEC\n");
+    // printf("PTR_DEC\n");
 
     if (bf->data_ptr_pos - 1 == SIZE_MAX) {
         fprintf(stderr, "Error: Data pointer underflow at character %lu\n", bf->data_ptr_pos);
@@ -66,15 +73,39 @@ void inst_ptr_dec(BrainFuck* bf) {
     bf->data_ptr_pos--;
 }
 
+void inst_inc(BrainFuck* bf) {
+    //DEBUG
+    // printf("INC\n");
+
+    (*bf->data_ptr)++;
+}
+
+void inst_dec(BrainFuck* bf) {
+    //DEBUG
+    // printf("DEC\n");
+
+    (*bf->data_ptr)--;
+}
+
+void inst_out(BrainFuck* bf) {
+    //DEBUG
+    // printf("OUT\n");
+
+    printf("%c", *bf->data_ptr);
+}
+
 // runs the interpreter with a given BrainFuck struct and source code
 int bf_run(BrainFuck* bf, char* source) {
     char* instruction_ptr = source;
 
     while (*instruction_ptr != '\0') {
-        printf("Current instruction: %c\n", *instruction_ptr);
+        // printf("Current instruction: %c\n", *instruction_ptr);
         switch (*instruction_ptr) {
             case '>': inst_ptr_inc(bf); break;
             case '<': inst_ptr_dec(bf); break;
+            case '+': inst_inc(bf); break;
+            case '-': inst_dec(bf); break;
+            case '.': inst_out(bf); break;
             default:;
         }
         instruction_ptr++;

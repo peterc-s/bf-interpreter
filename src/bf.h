@@ -15,6 +15,7 @@ typedef struct BrainFuck {
 BrainFuck bf_init(size_t mem_size);
 void bf_free(BrainFuck* bf);
 void bf_realloc_plus(BrainFuck* bf);
+void bf_dump_memory(BrainFuck* bf);
 int bf_run(BrainFuck* bf, char* source);
 
 #endif
