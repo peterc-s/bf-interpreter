@@ -7,4 +7,3 @@ An interpreter for the Brainfuck language, written in C.
 
 ## TODO
 - Implement a stack for `[` and `]` instructions.
-- Implement the `,` instruction.

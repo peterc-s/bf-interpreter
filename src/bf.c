@@ -99,6 +99,17 @@ void inst_out(BrainFuck* bf) {
     printf("%c", *bf->data_ptr);
 }
 
+// corresponds to ,
+void inst_in(BrainFuck* bf) {
+    //DEBUG
+    // printf("IN\n");
+    
+    char input;
+    scanf(" %c", &input);
+
+    *bf->data_ptr = input;
+}
+
 // runs the interpreter with a given BrainFuck struct and source code
 int bf_run(BrainFuck* bf, char* source) {
     char* instruction_ptr = source;
@@ -111,6 +122,7 @@ int bf_run(BrainFuck* bf, char* source) {
             case '+': inst_inc(bf); break;
             case '-': inst_dec(bf); break;
             case '.': inst_out(bf); break;
+            case ',': inst_in(bf); break;
             default:;
         }
         instruction_ptr++;
