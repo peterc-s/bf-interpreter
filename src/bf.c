@@ -43,6 +43,7 @@ void bf_dump_memory(BrainFuck* bf) {
     }
 }
 
+// corresponds to >
 void inst_ptr_inc(BrainFuck* bf) {
     //DEBUG
     // printf("PTR_INC\n");
@@ -60,6 +61,7 @@ void inst_ptr_inc(BrainFuck* bf) {
     bf->data_ptr_pos++;
 }
 
+// corresponds to <
 void inst_ptr_dec(BrainFuck* bf) {
     //DEBUG
     // printf("PTR_DEC\n");
@@ -73,6 +75,7 @@ void inst_ptr_dec(BrainFuck* bf) {
     bf->data_ptr_pos--;
 }
 
+// corresponds to +
 void inst_inc(BrainFuck* bf) {
     //DEBUG
     // printf("INC\n");
@@ -80,6 +83,7 @@ void inst_inc(BrainFuck* bf) {
     (*bf->data_ptr)++;
 }
 
+// corresponds to -
 void inst_dec(BrainFuck* bf) {
     //DEBUG
     // printf("DEC\n");
@@ -87,6 +91,7 @@ void inst_dec(BrainFuck* bf) {
     (*bf->data_ptr)--;
 }
 
+// corresponds to .
 void inst_out(BrainFuck* bf) {
     //DEBUG
     // printf("OUT\n");
