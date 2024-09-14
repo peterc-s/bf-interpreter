@@ -6,4 +6,5 @@ An interpreter for the Brainfuck language, written in C.
 - Allows source files up to 128MB! (Can be altered in source code.)
 
 ## TODO
-- Implement a stack for `[` and `]` instructions.
+- More robust error handling with better error messaging.
+- Tests.

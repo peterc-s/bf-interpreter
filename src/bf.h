@@ -4,11 +4,20 @@
 #include <stdint.h>
 #include <stdio.h>
 
+#define DEFAULT_STACK_SIZE 64
+
+typedef struct StackFrame {
+    char* open;
+    char* close;
+} StackFrame;
+
 typedef struct BrainFuck {
     size_t memory_size;
     uint_fast8_t* memory;
     uint_fast8_t* data_ptr;
     size_t data_ptr_pos;
+    char* open_stack[DEFAULT_STACK_SIZE];
+    int64_t stack_ptr;
 } BrainFuck;
 
 

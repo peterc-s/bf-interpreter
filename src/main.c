@@ -5,7 +5,7 @@
 #include "file.h"
 #include "bf.h"
 
-#define DEFAULT_MEM_SIZE 256
+#define DEFAULT_MEM_SIZE 64
 
 int main(int argc, char* argv[]) {
     // check for correct number of args
@@ -26,7 +26,7 @@ int main(int argc, char* argv[]) {
     // run the interpreter on the source file
     bf_run(&bf, src_file_buf);
 
-    // printf("\n---MEMORY DUMP---\n");
+    //debug
     // bf_dump_memory(&bf);
 
     // free any memory
