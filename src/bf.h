@@ -26,6 +26,7 @@ void bf_free(BrainFuck* bf);
 void bf_realloc_plus(BrainFuck* bf);
 void bf_dump_memory(BrainFuck* bf);
 void bf_dump_stack(BrainFuck* bf);
+void bf_print(BrainFuck* bf);
 int bf_run(BrainFuck* bf, char* source);
 
 #endif

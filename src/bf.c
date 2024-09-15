@@ -54,12 +54,22 @@ void bf_dump_memory(BrainFuck* bf) {
     }
 }
 
+// prints out the stack
 void bf_dump_stack(BrainFuck* bf) {
     printf("\n---STACK DUMP---\n");
     printf("SP: %ld\n", bf->stack_ptr);
     for (size_t i = 0; i < DEFAULT_STACK_SIZE; ++i) {
         printf("%03lu: %p\n", i, bf->open_stack[i]);
     }
+}
+
+void bf_print(BrainFuck* bf) {
+    printf("\n");
+    for (size_t i = 0; i < bf->memory_size; ++i) printf("%03d ", bf->memory[i]);
+    printf("\n");
+
+    for (size_t i = 0; i < bf->data_ptr_pos; ++i) printf("    ");
+    printf("^\n");
 }
 
 // corresponds to >
@@ -134,7 +144,7 @@ void inst_in(BrainFuck* bf) {
 // corresponds to [
 void inst_open_j(BrainFuck* bf, char** instruction_ptr) {
     //DEBUG
-    // printf("Current data: %d\nSP: %ld\n", *bf->data_ptr, bf->stack_ptr);
+    printf("Current data: %d\nSP: %ld\n", *bf->data_ptr, bf->stack_ptr);
 
     // if jump condition
     if (*bf->data_ptr == 0) {
@@ -150,7 +160,7 @@ void inst_open_j(BrainFuck* bf, char** instruction_ptr) {
         };
         
         //DEBUG
-        // printf("Jumped to: %c\n", **instruction_ptr);
+        printf("Jumped to: %c\n", **instruction_ptr);
         return;
     }
 
@@ -214,6 +224,10 @@ int bf_run(BrainFuck* bf, char* source) {
             case ']': inst_close_j(bf, &instruction_ptr); break;
             default:;
         }
+
+        //DEBUG
+        bf_print(bf);
+
         instruction_ptr++;
     }
 

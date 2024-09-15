@@ -5,7 +5,7 @@
 #include "file.h"
 #include "bf.h"
 
-#define DEFAULT_MEM_SIZE 128
+#define DEFAULT_MEM_SIZE 16
 
 int main(int argc, char* argv[]) {
     // check for correct number of args
@@ -29,6 +29,8 @@ int main(int argc, char* argv[]) {
     //debug
     // bf_dump_memory(&bf);
     // bf_dump_stack(&bf);
+    bf_print(&bf);
+
 
     // free any memory
     free(src_file_buf);
