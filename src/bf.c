@@ -128,8 +128,16 @@ void inst_open_j(BrainFuck* bf, char** instruction_ptr) {
 
     // if jump condition
     if (*bf->data_ptr == 0) {
-        // find next ] or EOF
-        for (; **instruction_ptr != ']' && **instruction_ptr != '\0'; ++(*instruction_ptr));
+        // find matching ] or EOF
+        int bal = 1;
+        for (; bal != 0; ++(*instruction_ptr)) {
+            switch (**instruction_ptr) {
+                case '[': ++bal; break;
+                case ']': --bal; break;
+                case '\0': error("Unmatched brackets."); break;
+                default:;
+            }
+        };
         if (**instruction_ptr == '\0') error("Unmatched brackets.");
         return;
     }
