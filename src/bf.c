@@ -148,7 +148,6 @@ void inst_open_j(BrainFuck* bf, char** instruction_ptr) {
                 default:;
             }
         };
-        if (**instruction_ptr == '\0') error("Unmatched brackets.");
         
         //DEBUG
         // printf("Jumped to: %c\n", **instruction_ptr);
@@ -176,7 +175,7 @@ void inst_close_j(BrainFuck* bf, char** instruction_ptr) {
     if (*bf->data_ptr != 0) {
         //DEBUG
         // printf("Jumping!\n");
-
+        
         // check for unmatched brackets
         if (bf->stack_ptr == -1) error("Unmatched brackets.");
 
