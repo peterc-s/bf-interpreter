@@ -1,5 +1,6 @@
 #include <stdint.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "bf.h"
 #include "error.h"
@@ -30,12 +31,20 @@ void bf_free(BrainFuck* bf) {
 
 // doubles the allocated memory in a BrainFuck struct
 void bf_realloc_plus(BrainFuck* bf) {
+    //DEBUG
+    // bf_dump_memory(bf);
+
     uint_fast8_t* new_memory = (uint_fast8_t*)realloc(bf->memory, bf->memory_size * 2);
 
     if (new_memory == NULL) error("Couldn't reallocate memory.");
 
+    for(size_t i = bf->memory_size; i < bf->memory_size * 2; ++i) {
+        new_memory[i] = 0;
+    }
+
     bf->memory = new_memory;
     bf->memory_size *= 2;
+    bf->data_ptr = bf->memory + bf->data_ptr_pos;
 }
 
 // prints out the memory
@@ -44,7 +53,9 @@ void bf_dump_memory(BrainFuck* bf) {
     for (size_t i = 0; i < bf->memory_size; ++i) {
         printf("%08lu: %d\n", i, bf->memory[i]);
     }
+}
 
+void bf_dump_stack(BrainFuck* bf) {
     printf("\n---STACK DUMP---\n");
     printf("SP: %ld\n", bf->stack_ptr);
     for (size_t i = 0; i < DEFAULT_STACK_SIZE; ++i) {
@@ -63,7 +74,7 @@ void inst_ptr_inc(BrainFuck* bf) {
         exit(EXIT_FAILURE);
     }
     
-    if (bf->data_ptr_pos > bf->memory_size) {
+    if (bf->data_ptr_pos + 1 >= bf->memory_size) {
         bf_realloc_plus(bf);
     }
 
