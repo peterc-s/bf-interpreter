@@ -156,15 +156,18 @@ void inst_open_j(BrainFuck* bf, char** instruction_ptr) {
 
         // find matching ] or EOF
         int bal = 1;
-        ++(*instruction_ptr);
-        for (; bal > 0; ++(*instruction_ptr)) {
+        do {
+            ++(*instruction_ptr);
             switch (**instruction_ptr) {
                 case '[': ++bal; /* printf("BAL +\n"); */ break;
                 case ']': --bal; /* printf("BAL -\n"); */ break;
                 case '\0': error("Unmatched brackets."); break;
                 default:;
             }
-        };
+
+            //DEBUG
+            // printf("%c", **instruction_ptr);
+        } while (bal != 0);
         
         //DEBUG
         // bf_dump_stack(bf);
@@ -217,6 +220,7 @@ int bf_run(BrainFuck* bf, char* source) {
     while (*instruction_ptr != '\0') {
         //DEBUG
         // printf("Current instruction: %c\n", *instruction_ptr);
+        // printf("%c", *instruction_ptr);
         switch (*instruction_ptr) {
             case '>': inst_ptr_inc(bf); break;
             case '<': inst_ptr_dec(bf); break;
