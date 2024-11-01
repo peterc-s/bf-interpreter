@@ -58,7 +58,7 @@ void bf_dump_memory(BrainFuck* bf) {
 void bf_dump_stack(BrainFuck* bf) {
     printf("\n---STACK DUMP---\n");
     printf("SP: %ld\n", bf->stack_ptr);
-    size_t i = 0;
+    int64_t i = 0;
     while (++i, bf->open_stack[i] != NULL) {
         printf("%03lu: %p : %c", i, bf->open_stack[i], *bf->open_stack[i]);
         if (i == bf->stack_ptr) printf(" <--");
@@ -239,5 +239,5 @@ int bf_run(BrainFuck* bf, char* source) {
     }
 
     return EXIT_SUCCESS;
-};
+}
 

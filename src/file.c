@@ -43,4 +43,4 @@ char* read_file(char* file_name) {
     file_buffer[file_size] = '\0';
 
     return file_buffer;
-};
+}

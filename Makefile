@@ -1,4 +1,5 @@
 CC = gcc
+CFLAGS ?= -Wall -Wextra -pedantic -O2
 
 SRCDIR = src
 BUILDDIR = build
@@ -15,7 +16,7 @@ $(NAME) : $(OBJ)
 
 $(BUILDDIR)/%.o : $(SRCDIR)/%.c
 	@mkdir -p $(dir $@)
-	$(CC) -c $< -o $@
+	$(CC) $(CFLAGS) -c $< -o $@
 
 run : $(NAME)
 	./$(NAME) $(ARGS)
