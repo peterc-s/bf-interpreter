@@ -58,8 +58,11 @@ void bf_dump_memory(BrainFuck* bf) {
 void bf_dump_stack(BrainFuck* bf) {
     printf("\n---STACK DUMP---\n");
     printf("SP: %ld\n", bf->stack_ptr);
-    for (size_t i = 0; i < DEFAULT_STACK_SIZE; ++i) {
-        printf("%03lu: %p\n", i, bf->open_stack[i]);
+    size_t i = 0;
+    while (++i, bf->open_stack[i] != NULL) {
+        printf("%03lu: %p : %c", i, bf->open_stack[i], *bf->open_stack[i]);
+        if (i == bf->stack_ptr) printf(" <--");
+        printf("\n");
     }
 }
 
@@ -144,23 +147,27 @@ void inst_in(BrainFuck* bf) {
 // corresponds to [
 void inst_open_j(BrainFuck* bf, char** instruction_ptr) {
     //DEBUG
-    printf("Current data: %d\nSP: %ld\n", *bf->data_ptr, bf->stack_ptr);
+    // printf("Current data: %d\nSP: %ld\n", *bf->data_ptr, bf->stack_ptr);
 
     // if jump condition
     if (*bf->data_ptr == 0) {
+        //DEBUG
+        // printf("j");
+
         // find matching ] or EOF
         int bal = 1;
-        for (; bal != 0; ++(*instruction_ptr)) {
+        ++(*instruction_ptr);
+        for (; bal > 0; ++(*instruction_ptr)) {
             switch (**instruction_ptr) {
-                case '[': ++bal; /* printf("BAL +\n");  */break;
-                case ']': --bal; /* printf("BAL -\n");  */break;
+                case '[': ++bal; /* printf("BAL +\n"); */ break;
+                case ']': --bal; /* printf("BAL -\n"); */ break;
                 case '\0': error("Unmatched brackets."); break;
                 default:;
             }
         };
         
         //DEBUG
-        printf("Jumped to: %c\n", **instruction_ptr);
+        // bf_dump_stack(bf);
         return;
     }
 
@@ -183,15 +190,12 @@ void inst_close_j(BrainFuck* bf, char** instruction_ptr) {
 
     // if jump condition
     if (*bf->data_ptr != 0) {
-        //DEBUG
-        // printf("Jumping!\n");
-        
         // check for unmatched brackets
         if (bf->stack_ptr == -1) error("Unmatched brackets.");
 
         // jump
         *instruction_ptr = bf->open_stack[bf->stack_ptr];
-        
+
         //DEBUG
         // printf("Jumped to: %c\n", **instruction_ptr);
         return;
@@ -226,8 +230,7 @@ int bf_run(BrainFuck* bf, char* source) {
         }
 
         //DEBUG
-        bf_print(bf);
-
+        // bf_print(bf);
         instruction_ptr++;
     }
 

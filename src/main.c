@@ -29,7 +29,7 @@ int main(int argc, char* argv[]) {
     //debug
     // bf_dump_memory(&bf);
     // bf_dump_stack(&bf);
-    bf_print(&bf);
+    // bf_print(&bf);
 
 
     // free any memory
