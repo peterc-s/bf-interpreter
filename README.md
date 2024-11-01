@@ -6,6 +6,7 @@ An interpreter for the Brainfuck language, written in C.
 - Allows source files up to 128MB! (Can be altered in source code.)
 
 ## Building
+Clone the repository:
 ```bash
 git clone https://github.com/peterc-s/bf-interpreter
 ```
