@@ -22,5 +22,4 @@ Will build the binary and put it into `zig-out/bin/`.
 ## TODO
 - More robust error handling with better error messaging.
 - Find a better way to free before exiting (best practice).
-- Figure out why ROT13 example from wikipedia doesn't work.
 - Tests.
