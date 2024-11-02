@@ -21,6 +21,11 @@ zig build
 
 Will build the binary and put it into `zig-out/bin/`.
 
+To clean up Zig build artifacts:
+```bash
+zig build clean
+```
+
 ### With Make
 Make sure you have GCC.
 
