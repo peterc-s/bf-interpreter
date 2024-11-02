@@ -26,6 +26,16 @@ To clean up Zig build artifacts:
 zig build clean
 ```
 
+To install:
+```bash
+sudo zig build --prefix-exe-dir /usr/sbin
+```
+
+To uninstall:
+```bash
+sudo rm /usr/sbin/bf-interpreter
+```
+
 ### With Make
 Make sure you have GCC.
 
