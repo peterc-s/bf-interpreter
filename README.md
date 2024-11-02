@@ -45,5 +45,15 @@ To clean up build artifacts:
 make clean
 ```
 
+To install (defaults to `/usr/sbin`):
+```bash
+make install
+```
+
+To uninstall:
+```bash
+make uninstall
+```
+
 ## TODO
 - Tests.

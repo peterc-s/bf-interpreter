@@ -3,6 +3,7 @@ CFLAGS ?= -Wall -Wextra -pedantic -O2
 
 SRCDIR = src
 BUILDDIR = build
+INSTALLDIR = /usr/sbin
 
 SRC = $(wildcard $(SRCDIR)/*.c)
 OBJ = $(SRC:$(SRCDIR)/%.c=$(BUILDDIR)/%.o)
@@ -25,4 +26,10 @@ clean:
 	-rm -r $(BUILDDIR)
 	-rm $(NAME)
 
-.PHONY: all clean run
+install : $(NAME)
+	sudo cp $(NAME) $(INSTALLDIR)/$(NAME)
+
+uninstall :
+	sudo rm $(INSTALLDIR)/$(NAME)
+
+.PHONY: all clean run install uninstall
