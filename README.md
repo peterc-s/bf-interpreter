@@ -41,6 +41,4 @@ make clean
 ```
 
 ## TODO
-- More robust error handling with better error messaging.
-- Find a better way to free before exiting (best practice).
 - Tests.
