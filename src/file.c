@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <errno.h>
 
 #include "error.h"
 
@@ -8,7 +9,10 @@
 char* read_file(char* file_name) {
     // open source file
     FILE *file = fopen(file_name, "rb");
-    if (!file) error("Failed to open file.");
+    if (!file && errno) {
+        perror("ERROR");
+        exit(errno);
+    };
 
     // get file size
     fseek(file, 0, SEEK_END);
@@ -18,14 +22,16 @@ char* read_file(char* file_name) {
     // check file is not too large
     if (file_size > MAX_FILE_SIZE) {
         fclose(file);
-        error("File too large.");
+        eprint("File too large.");
+        exit(EXIT_FAILURE);
     };
 
     // allocate memory for the file array
     char *file_buffer = (char *)malloc(file_size + 1);
-    if (!file_buffer) {
+    if (!file_buffer && errno) {
         fclose(file);
-        error("File buffer memory allocation failed.");
+        perror("ERROR");
+        exit(errno);
     };
 
     // read file contents
@@ -33,7 +39,8 @@ char* read_file(char* file_name) {
     if (bytes_read != file_size) {
         free(file_buffer);
         fclose(file);
-        error("Partial file read occurred.");
+        eprint("Partial file read occurred.");
+        exit(EXIT_FAILURE);
     };
 
     // close file
