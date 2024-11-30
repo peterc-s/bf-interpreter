@@ -1,19 +1,21 @@
 CC = gcc
-CFLAGS ?= -Wall -Wextra -pedantic -O2
+CFLAGS ?= -Wall -Wextra -pedantic -O2 -D_FORTIFY_SOURCE=3 -Werror=format-security -fstack-clash-protection -fstack-protector-all -fcf-protection -s -Wl,-z,relro,-z,now
+CFLAGS += $(CFLAGS_EX)
 
 SRCDIR = src
 BUILDDIR = build
-INSTALLDIR = /usr/sbin
 
 SRC = $(wildcard $(SRCDIR)/*.c)
 OBJ = $(SRC:$(SRCDIR)/%.c=$(BUILDDIR)/%.o)
+
+INSTALLDIR = /usr/sbin
 
 NAME = bf-interpreter
 
 all : $(NAME)
 
 $(NAME) : $(OBJ)
-	$(CC) $^ -o $@
+	$(CC) $(CFLAGS) $^ -o $@
 
 $(BUILDDIR)/%.o : $(SRCDIR)/%.c
 	@mkdir -p $(dir $@)
