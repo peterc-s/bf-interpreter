@@ -34,6 +34,7 @@ pub fn build(b: *std.Build) void {
     const clean_step = b.step("clean", "Clean Zig build artifacts.");
     clean_step.dependOn(&b.addRemoveDirTree(b.install_path).step);
     if (@import("builtin").os.tag != .windows) {
+        clean_step.dependOn(&b.addRemoveDirTree(b.pathFromRoot("zig-out")).step);
         clean_step.dependOn(&b.addRemoveDirTree(b.pathFromRoot(".zig-cache")).step);
     }
 }
