@@ -6,8 +6,8 @@
 #include "error.h"
 
 // initialises a BrainFuck struct with the given memory size
-BrainFuck bf_init(size_t mem_size) {
-    uint_fast8_t* memory = (uint_fast8_t*)calloc(mem_size, sizeof(uint_fast8_t));
+BrainFuck bf_init() {
+    uint_fast8_t* memory = calloc(DEFAULT_MEM_SIZE, sizeof(uint_fast8_t));
 
     if (!memory && errno) {
         eprint("ERROR");
@@ -16,11 +16,9 @@ BrainFuck bf_init(size_t mem_size) {
 
     uint_fast8_t* data_ptr = memory;
     BrainFuck bf = {
-        .memory_size = mem_size,
+        .memory_size = DEFAULT_MEM_SIZE,
         .memory = memory,
         .data_ptr = data_ptr,
-        .data_ptr_pos = 0,
-        .open_stack = { NULL },
         .stack_ptr = -1,
     };
 
@@ -37,14 +35,15 @@ void bf_realloc_plus(BrainFuck* bf) {
     //DEBUG
     // bf_dump_memory(bf);
 
-    uint_fast8_t* new_memory = (uint_fast8_t*)realloc(bf->memory, bf->memory_size * 2);
+    uint_fast8_t* new_memory = realloc(bf->memory, bf->memory_size * 2);
 
-    if (!new_memory && errno) {
+    if (new_memory == NULL) {
+        bf_free(bf);
         eprint("ERROR");
         exit(errno);
     };
 
-    for(size_t i = bf->memory_size; i < bf->memory_size * 2; ++i) {
+    for (size_t i = bf->memory_size; i < bf->memory_size * 2; ++i) {
         new_memory[i] = 0;
     }
 
@@ -62,12 +61,14 @@ void bf_dump_memory(BrainFuck* bf) {
 }
 
 // prints out the stack
-void bf_dump_stack(BrainFuck* bf) {
+void bf_dump_stack(BrainFuck* bf, char* instruction_base) {
     printf("\n---STACK DUMP---\n");
     printf("SP: %ld\n", bf->stack_ptr);
-    int64_t i = 0;
-    while (++i, bf->open_stack[i] != NULL) {
-        printf("%03lu: %p : %c", i, bf->open_stack[i], *bf->open_stack[i]);
+    int64_t max_print = (bf->stack_ptr > DEFAULT_STACK_SIZE) ? DEFAULT_STACK_SIZE : bf->stack_ptr;
+    //DEBUG
+    printf("max_print: %ld\n", max_print);
+    for (int64_t i = 0; i < max_print + 1; ++i) {
+        printf("%03lu: %p (%p + 0x%lx) : %c", i, instruction_base + bf->open_stack[i], instruction_base, bf->open_stack[i], *(instruction_base + bf->open_stack[i]));
         if (i == bf->stack_ptr) printf(" <--");
         printf("\n");
     }
@@ -87,12 +88,7 @@ void inst_ptr_inc(BrainFuck* bf) {
     //DEBUG
     // printf("PTR_INC\n");
 
-    // check for overflow
-    if (bf->data_ptr_pos + 1 == 0) {
-        fprintf(stderr, "ERROR: Data pointer overflow at character %lu\n", bf->data_ptr_pos);
-        exit(EXIT_FAILURE);
-    }
-    
+    // check if enough memory
     if (bf->data_ptr_pos + 1 >= bf->memory_size) {
         bf_realloc_plus(bf);
     }
@@ -108,6 +104,7 @@ void inst_ptr_dec(BrainFuck* bf) {
 
     // check for underflow
     if (bf->data_ptr_pos - 1 == SIZE_MAX) {
+        bf_free(bf);
         fprintf(stderr, "ERROR: Data pointer underflow at character %lu\n", bf->data_ptr_pos);
         exit(EXIT_FAILURE);
     }
@@ -152,7 +149,7 @@ void inst_in(BrainFuck* bf) {
 }
 
 // corresponds to [
-void inst_open_j(BrainFuck* bf, char** instruction_ptr) {
+void inst_open_j(BrainFuck* bf, char** instruction_ptr, char* instruction_base) {
     //DEBUG
     // printf("Current data: %d\nSP: %ld\n", *bf->data_ptr, bf->stack_ptr);
 
@@ -177,14 +174,18 @@ void inst_open_j(BrainFuck* bf, char** instruction_ptr) {
         } while (bal != 0);
         
         //DEBUG
-        // bf_dump_stack(bf);
+        // bf_dump_stack(bf, instruction_base);
         return;
     }
 
     // if not, then we should add to stack
     
-    // check for overflow
-    if (bf->stack_ptr + 1 > DEFAULT_STACK_SIZE) {
+    // check for overflow.
+    // -2 because DEFAULT_STACK_SIZE is a size so -1,
+    // and we will be adding onto the stack so another -1 
+    if (bf->stack_ptr > DEFAULT_STACK_SIZE - 2) {
+        bf_dump_stack(bf, instruction_base);
+        bf_free(bf);
         eprint("Stack overflow.");
         exit(EXIT_FAILURE);
     };
@@ -193,11 +194,11 @@ void inst_open_j(BrainFuck* bf, char** instruction_ptr) {
     // printf("Adding to stack!\n");
 
     // create new item on stack
-    bf->open_stack[++bf->stack_ptr] = *instruction_ptr;
+    bf->open_stack[++bf->stack_ptr] = *instruction_ptr - instruction_base;
 }
 
 // corresponds to ]
-void inst_close_j(BrainFuck* bf, char** instruction_ptr) {
+void inst_close_j(BrainFuck* bf, char** instruction_ptr, char* instruction_base) {
     //DEBUG
     // printf("Current data: %d\nSP: %ld\n", *bf->data_ptr, bf->stack_ptr);
 
@@ -205,12 +206,13 @@ void inst_close_j(BrainFuck* bf, char** instruction_ptr) {
     if (*bf->data_ptr != 0) {
         // check for unmatched brackets
         if (bf->stack_ptr == -1) {
+            bf_free(bf);
             eprint("Unmatched brackets.");
             exit(EXIT_FAILURE);
         };
 
         // jump
-        *instruction_ptr = bf->open_stack[bf->stack_ptr];
+        *instruction_ptr = instruction_base + bf->open_stack[bf->stack_ptr];
 
         //DEBUG
         // printf("Jumped to: %c\n", **instruction_ptr);
@@ -221,6 +223,7 @@ void inst_close_j(BrainFuck* bf, char** instruction_ptr) {
     
     // check if nothing on stack
     if (bf->stack_ptr == -1) {
+        bf_free(bf);
         eprint("Unmatched brackets.");
         exit(EXIT_FAILURE);
     };
@@ -235,6 +238,7 @@ int bf_run(BrainFuck* bf, char* source) {
 
     while (*instruction_ptr != '\0') {
         //DEBUG
+        // bf_dump_stack(bf, source);
         // printf("Current instruction: %c\n", *instruction_ptr);
         // printf("%c", *instruction_ptr);
         switch (*instruction_ptr) {
@@ -244,8 +248,8 @@ int bf_run(BrainFuck* bf, char* source) {
             case '-': inst_dec(bf); break;
             case '.': inst_out(bf); break;
             case ',': inst_in(bf); break;
-            case '[': inst_open_j(bf, &instruction_ptr); break;
-            case ']': inst_close_j(bf, &instruction_ptr); break;
+            case '[': inst_open_j(bf, &instruction_ptr, source); break;
+            case ']': inst_close_j(bf, &instruction_ptr, source); break;
             default:;
         }
 

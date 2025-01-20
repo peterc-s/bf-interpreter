@@ -5,7 +5,6 @@
 #include "file.h"
 #include "bf.h"
 
-#define DEFAULT_MEM_SIZE 64
 
 int main(int argc, char* argv[]) {
     // check for correct number of args
@@ -17,18 +16,18 @@ int main(int argc, char* argv[]) {
     // read in the file
     char* src_file_buf = read_file(argv[1]);
 
-    // DEBUG
+    //DEBUG
     // printf("File contents:\n%s", src_file_buf);
    
     // create a new BrainFuck struct
-    BrainFuck bf = bf_init(DEFAULT_MEM_SIZE);
+    BrainFuck bf = bf_init();
 
     // run the interpreter on the source file
     bf_run(&bf, src_file_buf);
 
-    //debug
+    //DEBUG
     // bf_dump_memory(&bf);
-    // bf_dump_stack(&bf);
+    // bf_dump_stack(&bf, src_file_buf);
     // bf_print(&bf);
 
     // free any memory

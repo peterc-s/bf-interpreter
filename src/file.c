@@ -27,7 +27,7 @@ char* read_file(char* file_name) {
     };
 
     // allocate memory for the file array
-    char *file_buffer = (char *)malloc(file_size + 1);
+    char* file_buffer = malloc(file_size + 1);
     if (!file_buffer && errno) {
         fclose(file);
         perror("ERROR");
